@@ -1,0 +1,33 @@
+{
+  "manifest_version": 2,
+
+  "name": "Read It",
+  "description": "Read selection text.",
+  "version": "0.0",
+
+  "icons": {
+    "128": "icon-128.png"
+  },
+
+  "background": {
+    "page": "background.html",
+    "persistent": false
+  },
+
+  "browser_action": {
+    "default_icon": "icon-128.png"
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["contentscript.js"],
+      "all_frames": true
+    }
+  ],
+
+  "permissions": [
+    "activeTab",
+    "http://tsn.baidu.com/*"
+  ]
+}
