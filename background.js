@@ -1,16 +1,22 @@
 // http://yuyin.baidu.com/docs/tts/136#POST调用方式
 
 var chunks = [];
+var audio = document.getElementById('audio');
 
 function textToChunks(text) {
-  chunks = text.match(/[\s\S]{1,500}/mg)
+  chunks = text.replace(/\s/mg, ' ').match(/[\s\S]{1,500}/g)
 }
 
 function sourceUrl(text) {
   var url = 'http://tts.baidu.com/text2audio?text='
-          + escape(text)
+          + encodeURI(text)
           + '&lan=ZH&ie=UTF-8';
   return url;
+}
+
+function playUrl(url) {
+  audio.src = url;
+  audio.play();
 }
 
 function startReader() {
@@ -19,8 +25,7 @@ function startReader() {
   var text = chunks.shift();
   var url  = sourceUrl(text);
 
-  console.log(url);
-  document.getElementById('source').src = url;
+  playUrl(url);
 }
 
 function readText(text) {
@@ -29,6 +34,8 @@ function readText(text) {
   textToChunks(text);
   startReader();
 }
+
+audio.onended = startReader;
 
 chrome.browserAction.onClicked.addListener(function(tab) {
   chrome.tabs.sendMessage(tab.id, {}, function(text) {
