@@ -1,10 +1,18 @@
 // http://yuyin.baidu.com/docs/tts/136#POST调用方式
 
+const PAT_BLANK = /^\s*$/g
+
 var chunks = [];
 var audio = document.getElementById('audio');
 
-function textToChunks(text) {
-  chunks = text.replace(/\s/mg, ' ').match(/[\s\S]{1,500}/g)
+
+function isBlank(text) {
+  return PAT_BLANK.test(text)
+}
+
+function addToList(text) {
+  console.log('ADDED:', text)
+  chunks = chunks.concat(text.replace(/\s/mg, ' ').match(/[\s\S]{1,500}/g))
 }
 
 function sourceUrl(text) {
@@ -19,7 +27,7 @@ function playUrl(url) {
   audio.play();
 }
 
-function startReader() {
+function play() {
   if (chunks.length == 0) return;
 
   var text = chunks.shift();
@@ -28,17 +36,17 @@ function startReader() {
   playUrl(url);
 }
 
-function readText(text) {
-  if (!text) return;
+audio.onended = play;
 
-  textToChunks(text);
-  startReader();
-}
-
-audio.onended = startReader;
-
+const code = 'window.getSelection().toString()'
 chrome.browserAction.onClicked.addListener(function(tab) {
-  chrome.tabs.sendMessage(tab.id, {}, function(text) {
-    readText(text);
-  });
+  chrome.tabs.executeScript({ code, allFrames: true, matchAboutBlank: true }, (results) => {
+    results.forEach(text => {
+      if (!isBlank(text)) {
+        addToList(text)
+      }
+    })
+
+    play()
+  })
 });

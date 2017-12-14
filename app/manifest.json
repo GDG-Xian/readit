@@ -22,16 +22,8 @@
     "default_title": "__MSG_browserActionTitle__"
   },
 
-  "content_scripts": [
-    {
-      "matches": ["<all_urls>"],
-      "js": ["scripts/contentscript.js"],
-      "all_frames": true
-    }
-  ],
-
   "permissions": [
     "activeTab",
-    "http://tsn.baidu.com/*"
+    "<all_urls>"
   ]
 }
